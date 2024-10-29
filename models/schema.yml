@@ -1,0 +1,12 @@
+version: 2
+
+sources:
+  - name: gz_raw_data    
+    description: gz_raw_data est le nom original du dataset source, raw son alias.
+    tables:
+      - name: raw_gz_sales
+        description: fichier source des ventes de greenweez
+      - name: raw_gz_product
+        description: fichier source de la liste des produits de greenweez
+      - name: raw_gz_ship
+        description: fichier source des livraisons de greenweez
