@@ -1,9 +1,16 @@
-SELECT
-    stg_raw__sales.date_date,
-    stg_raw__sales.products_id,
-    ROUND(SUM(stg_raw__sales.revenue - stg_raw__product.purchase_price), 2) AS margin,
-    ROUND(SUM(stg_raw__sales.quantity * stg_raw__product.purchase_price), 2) AS purchase_cost,
+WITH sub_purchasecost AS (SELECT
+    date_date,
+    orders_id,
+    products_id,
+    revenue,
+    quantity,
+    purchase_price,
+ROUND(purchase_price*quantity,2) AS purchase_cost,
 FROM {{ ref('stg_raw__sales') }}
 LEFT JOIN {{ ref('stg_raw__product') }}
-ON stg_raw__product.products_id = stg_raw__sales.products_id
-GROUP BY stg_raw__sales.date_date, stg_raw__sales.products_id
+USING (products_id)
+)
+SELECT
+*,
+ROUND(revenue - purchase_cost,2) AS margin
+FROM sub_purchasecost
