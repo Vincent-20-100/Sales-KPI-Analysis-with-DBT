@@ -14,8 +14,6 @@ sources:
         columns:
           - name: pdt_id
             description: id of the product sale
-            tests:
-              - not_null
           - name: date_date
             description: date of purchase
           - name: orders_id
@@ -24,6 +22,11 @@ sources:
             description: price of the product
           - name: quantity
             description: quantity of the same product in the order
+        tests:
+          - unique:
+              column_name: (orders_id || '_' || pdt_id)
+          - not_null:
+              column_name: (orders_id || '_' || pdt_id)
       - name: product
         identifier: raw_gz_product
         description: products of Greenweez / what products we have and the associated data
