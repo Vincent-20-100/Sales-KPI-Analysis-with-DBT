@@ -1,19 +1,19 @@
-with 
+  with
 
-source as (
+  source as (
 
-    select * from {{ source('raw', 'product') }}
+      select * from {{ source('raw', 'product') }}
 
-),
+  ),
 
-renamed as (
+  renamed as (
 
-    select
-        products_id,
-        CAST(purchse_price AS float64) as purchase_price
+      select
+          products_id,
+          CAST(purchse_price as FLOAT64) as purchase_price
 
-    from source
+      from source
 
-)
+  )
 
-select * from renamed
+  select * from renamed

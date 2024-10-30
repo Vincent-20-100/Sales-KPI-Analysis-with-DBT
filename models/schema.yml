@@ -1,55 +1,94 @@
 version: 2
 
 sources:
-  - name: raw
-    schema: gz_raw_data
-    description: gz_raw_data est le nom original du dataset source, raw son alias.
-    tables:
-      - name: sales
-        identifier: raw_gz_sales
-        description: sales of Greenweez / we have one row per product_id found in each orders_id
-        loaded_at_field: "CAST(date_date AS TIMESTAMP)"
-        freshness:
-          warn_after: { count: 90, period: day}
-        columns:
-          - name: pdt_id
-            description: id of the product sale
-          - name: date_date
-            description: date of purchase
-          - name: orders_id
-            description: id of the order
-          - name: revenue
-            description: price of the product
-          - name: quantity
-            description: quantity of the same product in the order
-        tests:
-          - unique:
-              column_name: (orders_id || '_' || pdt_id)
-          - not_null:
-              column_name: (orders_id || '_' || pdt_id)
-      - name: product
-        identifier: raw_gz_product
-        description: products of Greenweez / what products we have and the associated data
-        columns:
-          - name: products_id
-            description: id of the product
-            tests:
+   - name: raw
+     schema: gz_raw_data
+     tables:
+       - name: sales
+         identifier: raw_gz_sales
+         description: sales of Greenweez / we have on row per productid found in each orders_id
+         loaded_at_field: "CAST(date_date AS TIMESTAMP)"
+         freshness:
+           warn_after: {count: 90, period: day}
+         columns:
+           - name: date_date
+             description: date of purchase
+           - name: orders_id
+             description: foreign key to ship
+           - name: pdt_id
+             description: foreign key to product
+           - name: revenue
+             description: the amount paid by the customer to purchase the product. revenue = quantity * selling_price
+           - name: quanitity
+             description: the quantity of products purchased for a given order
+         tests:
+           - unique:
+               column_name: "(orders_id || '-' || pdt_id)"
+           - dbt_utils.unique_combination_of_columns:
+               combination_of_columns:
+                 - orders_id
+                 - pdt_id
+
+       - name: product
+         identifier: raw_gz_product
+         description: produst of Greenweez
+         columns:
+           - name: products_id
+             description: Primary key
+             tests:
               - unique
               - not_null
-          - name: purchSE_PRICE
-            description: purchse price of the product
-      - name: ship
-        identifier: raw_gz_ship
-        description: ships of Greenweez / a ship list with orders_id, shipping_fee, ship_cost, etc.
-        columns:
-          - name: orders_id
-            description: id of the order
-            tests:
+           - name: purchase_price
+             description: the purchase price of the product
+
+       - name: ship
+         identifier: raw_gz_ship
+         description: shipping data for Greenweez orders
+         columns:
+           - name: orders_id
+             description: Primary key
+             tests:
               - unique
               - not_null
-          - name: shipping_fee
-            description: total shipping fee payed by the customer for the order
-          - name: logCost
-            description: log cost payed by the supplier for the order
-          - name: ship_cost
-            description: ship cost payed by the supplier for the order
+           - name: shipping_fee
+             description: the price the customer pays for shipping
+           - name: log_cost
+             description: the cost of preparing the parcel in the distribution centre/warehouse
+           - name: ship_cost
+             description: shipping cost paid by Greenweez to the carrier/logistics provider
+
+models:
+   - name: int_sales_margin
+     description: margin calculation per order
+     columns:
+       - name: orders_id
+         description: orders key
+         tests:
+           - not_null
+       - name: products_id
+         description: products key
+         tests:
+           - not_null
+       - name: margin
+         description: Margin = Revenue - Purchase_cost
+         tests:
+           - not_null
+       - name: Purchase_cost
+         description: Purchase_cost = Quantity * Purchase_price
+         tests:
+           - not_null
+       - name: date_date
+         description: date of the order
+         tests:
+           - not_null
+       - name: revenue
+         description: sum of revenue per order
+         tests:
+           - not_null
+       - name: quantity
+         description: sum of quantity per order
+         tests:
+           - not_null
+     tests:
+       - unique:
+           column_name: "(orders_id || '-' || products_id)"

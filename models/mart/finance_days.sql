@@ -1,13 +1,16 @@
-SELECT
-    sales.date_date,
-    ROUND(SUM(sales.revenue), 2) AS total_revenue,
-    ROUND(AVG(sales.revenue), 2) AS avereage_basket,
-    ROUND(SUM(margin.operational_margin), 2) AS operational_margin,
-    ROUND(SUM(sales.purchase_cost), 2) AS purchase_cost,
-    ROUND(SUM(margin.shipping_fee), 2) AS shipping_fee,
-    ROUND(SUM(margin.log_cost), 2) AS log_cost,
-    SUM(sales.products_sold) AS products_sold
-FROM {{ref('int_orders_margin')}} AS sales 
-LEFT JOIN {{ref('int_orders_operational')}} AS margin
-USING(orders_id)
-GROUP BY date_date
+ SELECT
+     date_date
+     ,COUNT(orders_id) AS nb_transactions
+     ,ROUND(SUM(revenue),0) AS revenue
+     ,ROUND(AVG(revenue),1) AS average_basket
+     ,ROUND(SUM(revenue)/COUNT(orders_id),1) AS average_basket_bis
+     ,ROUND(SUM(margin),0) AS margin
+     ,ROUND(SUM(operational_margin),0) AS operational_margin
+     ,ROUND(SUM(purchase_cost),0) AS purchase_cost
+     ,ROUND(SUM(shipping_fee),0) AS shipping_fee
+     ,ROUND(SUM(logcost),0) AS logcost
+     ,ROUND(SUM(ship_cost),0) AS ship_cost
+     ,SUM(quantity) AS quantity
+ FROM {{ref("int_orders_operational")}}
+ GROUP BY  date_date
+ ORDER BY  date_date DESC
