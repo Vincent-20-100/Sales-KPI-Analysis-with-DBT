@@ -51,7 +51,139 @@ sources:
            - name: log_cost
              description: the cost of preparing the parcel in the distribution centre/warehouse
            - name: ship_cost
-             description: shipping cost paid by Greenweez to the carrier/logistics provider
+             description: shipping cost paid by Greenweez to the carrier/logistics provider    
+
+       - name: adwords
+         identifier: raw_gz_adwords
+         description: "Données publicitaires Google Adwords."
+         columns:
+          - name: date_date
+            description: "Date de la campagne."
+            tests:
+              - not_null
+          - name: paid_source
+            description: "Source publicitaire (Google Adwords)."
+            tests:
+              - not_null
+          - name: campaign_key
+            description: "Clé unique de la campagne Adwords."
+            tests:
+              - not_null
+          - name: camPGN_name
+            description: "Nom de la campagne."
+            tests:
+              - not_null
+          - name: ads_cost
+            description: "Coût des annonces."
+            tests:
+              - not_null
+          - name: impression
+            description: "Nombre d'impressions générées par la campagne."
+            tests:
+              - not_null
+          - name: click
+            description: "Nombre de clics générés par la campagne."
+            tests:
+              - not_null
+
+       - name: bing
+         identifier: raw_gz_bing
+         description: "Données publicitaires Bing."
+         columns:
+          - name: date_date
+            description: "Date de la campagne."
+            tests:
+              - not_null
+          - name: paid_source
+            description: "Source publicitaire (Bing)."
+            tests:
+              - not_null
+          - name: campaign_key
+            description: "Clé unique de la campagne Bing."
+            tests:
+              - not_null
+          - name: camPGN_name
+            description: "Nom de la campagne."
+            tests:
+              - not_null
+          - name: ads_cost
+            description: "Coût des annonces."
+            tests:
+              - not_null
+          - name: impression
+            description: "Nombre d'impressions générées par la campagne."
+            tests:
+              - not_null
+          - name: click
+            description: "Nombre de clics générés par la campagne."
+            tests:
+              - not_null
+
+       - name: criteo
+         identifier: raw_gz_criteo
+         description: "Données publicitaires Criteo."
+         columns:
+          - name: date_date
+            description: "Date de la campagne."
+            tests:
+              - not_null
+          - name: paid_source
+            description: "Source publicitaire (Criteo)."
+            tests:
+              - not_null
+          - name: campaign_key
+            description: "Clé unique de la campagne Criteo."
+            tests:
+              - not_null
+          - name: camPGN_name
+            description: "Nom de la campagne."
+            tests:
+              - not_null
+          - name: ads_cost
+            description: "Coût des annonces."
+            tests:
+              - not_null
+          - name: impression
+            description: "Nombre d'impressions générées par la campagne."
+            tests:
+              - not_null
+          - name: click
+            description: "Nombre de clics générés par la campagne."
+            tests:
+              - not_null
+
+       - name: facebook
+         identifier: raw_gz_facebook
+         description: "Données publicitaires Facebook."
+         columns:
+          - name: date_date
+            description: "Date de la campagne."
+            tests:
+              - not_null
+          - name: paid_source
+            description: "Source publicitaire (Facebook)."
+            tests:
+              - not_null
+          - name: campaign_key
+            description: "Clé unique de la campagne Facebook."
+            tests:
+              - not_null
+          - name: camPGN_name
+            description: "Nom de la campagne."
+            tests:
+              - not_null
+          - name: ads_cost
+            description: "Coût des annonces."
+            tests:
+              - not_null
+          - name: impression
+            description: "Nombre d'impressions générées par la campagne."
+            tests:
+              - not_null
+          - name: click
+            description: "Nombre de clics générés par la campagne."
+            tests:
+              - not_null
 
 models:
    - name: int_sales_margin
@@ -88,3 +220,136 @@ models:
      tests:
        - unique:
            column_name: "(orders_id || '-' || products_id)"
+
+   - name: int_campaigns
+     description: "Modèle intermédiaire consolidé des données de campagnes publicitaires provenant de différentes sources."
+     columns:
+      - name: date_date
+        description: "Date de la campagne."
+        tests:
+          - not_null
+      - name: paid_source
+        description: "Source publicitaire (ex. Facebook, Bing, Criteo, Adwords)."
+        tests:
+          - not_null
+      - name: campaign_key
+        description: "Clé unique de la campagne dans la source."
+        tests:
+          - not_null
+      - name: campaign_name
+        description: "Nom de la campagne."
+        tests:
+          - not_null
+      - name: ads_cost
+        description: "Coût des annonces pour la campagne."
+        tests:
+          - not_null
+      - name: impression
+        description: "Nombre d'impressions générées par la campagne."
+        tests:
+          - not_null
+      - name: click
+        description: "Nombre de clics générés par la campagne."
+        tests:
+          - not_null
+     tests:
+      - unique:
+          column_name: (date_date || '_' || paid_source || '_' || campaign_key)
+
+   - name: int_campaigns_day
+     description: "Modèle intermédiaire consolidé des campagnes publicitaires, agrégé par jour avec le coût, les impressions et les clics."
+     columns:
+      - name: date_date
+        description: "Date des campagnes publicitaires agrégées."
+        tests:
+          - not_null
+          - unique
+
+      - name: ads_cost
+        description: "Coût total des annonces publicitaires pour chaque journée."
+        tests:
+          - not_null
+
+      - name: ads_impression
+        description: "Nombre total d'impressions publicitaires pour chaque journée."
+        tests:
+          - not_null
+
+      - name: ads_clicks
+        description: "Nombre total de clics publicitaires pour chaque journée."
+        tests:
+          - not_null
+
+   - name: finance_campaigns_day
+     description: "Modèle consolidé des campagnes et performances financières journalières, incluant les coûts publicitaires et la marge opérationnelle."
+     columns:
+      - name: date_date
+        description: "Clé primaire. Date de la campagne et des performances financières consolidées."
+        tests:
+          - not_null
+          - unique
+
+      - name: ads_margin
+        description: "Marge publicitaire, calculée en soustrayant les coûts publicitaires de la marge opérationnelle."
+        tests:
+          - not_null
+
+      - name: average_basket
+        description: "Panier moyen journalier."
+        tests:
+          - not_null
+
+      - name: operational_margin
+        description: "Marge opérationnelle totale pour la journée."
+        tests:
+          - not_null
+
+      - name: ads_cost
+        description: "Coût total des annonces pour la journée."
+        tests:
+          - not_null
+
+      - name: ads_impression
+        description: "Nombre total d'impressions publicitaires pour la journée."
+        tests:
+          - not_null
+
+      - name: ads_clicks
+        description: "Nombre total de clics publicitaires pour la journée."
+        tests:
+          - not_null
+
+      - name: quantity
+        description: "Quantité totale de produits vendus ou services rendus pour la journée."
+        tests:
+          - not_null
+
+      - name: revenue
+        description: "Revenu total généré pour la journée."
+        tests:
+          - not_null
+
+      - name: purchase_cost
+        description: "Coût total des achats pour la journée."
+        tests:
+          - not_null
+
+      - name: margin
+        description: "Marge totale pour la journée."
+        tests:
+          - not_null
+
+      - name: shipping_fee
+        description: "Total des frais de livraison pour la journée."
+        tests:
+          - not_null
+
+      - name: logcost
+        description: "Total des coûts logistiques pour la journée."
+        tests:
+          - not_null
+
+      - name: ship_cost
+        description: "Coût total d'expédition pour la journée."
+        tests:
+          - not_null
