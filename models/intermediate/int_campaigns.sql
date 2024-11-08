@@ -13,6 +13,8 @@
 --FROM {{ref('stg_raw__facebook')}}
 
 
+---- Using the package fonction :
+
 {{ dbt_utils.union_relations(
     relations=[
                 ref('stg_raw__adwords'),
