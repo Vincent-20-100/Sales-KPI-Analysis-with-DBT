@@ -1,15 +1,8 @@
-Welcome to your new dbt project!
-
-### Using the starter project
-
-Try running the following commands:
-- dbt run
-- dbt test
+Welcome to my first dbt project!
 
 
-### Resources:
-- Learn more about dbt [in the docs](https://docs.getdbt.com/docs/introduction)
-- Check out [Discourse](https://discourse.getdbt.com/) for commonly asked questions and answers
-- Join the [dbt community](https://getdbt.com/community) to learn from other analytics engineers
-- Find [dbt events](https://events.getdbt.com) near you
-- Check out [the blog](https://blog.getdbt.com/) for the latest news on dbt's development and best practices
+As part of my Data Analyst training, I created this data transformation project using DBT. This project represents my first DBT/GitHub project, which I have thoroughly reviewed, expanded, and cleaned to make it a showcase for my portfolio on GitHub.
+
+In addition to all the necessary SQL queries for data cleaning and transformation, I developed a complete schema.yml file to set up essential tests and detailed descriptions for a well-structured pipeline. Thanks to this setup, DBT can automatically generate reports, and the entire pipeline structure is clearly documented, making it easy for anyone to understand and use.
+
+Enjoy exploring!
